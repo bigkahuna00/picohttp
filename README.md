@@ -27,3 +27,6 @@ gcc picohttp.c -o picohttp
 ```
 ## Image
 ![Screenshot](https://i.imgur.com/AO5E7S6.png)
+
+## License
+[MIT](https://github.com/bigkahuna00/picohttp/blob/main/LICENSE.md)
