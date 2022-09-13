@@ -67,19 +67,19 @@ void listener(int PORT, char* filename)
 	struct sockaddr_in listenersock;						//Accessing the sockaddr_in structure in netinet/in.h
 
 	struct sockaddr_in clientsock;							//Client structure
-	int clientsize = sizeof(clientsock);					//The size of the client structure
+	int clientsize = sizeof(clientsock);						//The size of the client structure
 
 	char* client_request = malloc(512);						//Allocated space for client's request
 
-	int sockfd;												//Listener socket file descriptor
+	int sockfd;									//Listener socket file descriptor
 
-	int clientfd;											//Client socket file descriptor
+	int clientfd;									//Client socket file descriptor
 
 	listenersock.sin_family = AF_INET;						//Family: AF_INET
-	listenersock.sin_port = htons(PORT);					//Port number conversion from little endian to big endian
-	listenersock.sin_addr.s_addr = inet_addr(LISTENER_IP);	//IP address conversion from dotted decimal notation to binary
+	listenersock.sin_port = htons(PORT);						//Port number conversion from little endian to big endian
+	listenersock.sin_addr.s_addr = inet_addr(LISTENER_IP);				//IP address conversion from dotted decimal notation to binary
 
-	sockfd = socket(AF_INET, SOCK_STREAM, 0);				//Initializing the socket file descriptor
+	sockfd = socket(AF_INET, SOCK_STREAM, 0);					//Initializing the socket file descriptor
 
 	//Check for errors
 	if(sockfd != -1)
@@ -87,10 +87,10 @@ void listener(int PORT, char* filename)
 		//Bind the listnersock structure
 		if(bind(sockfd, (const struct sockaddr *)&listenersock, sizeof(listenersock)) != -1)
 		{	
+		printf("Listening on %s:%i\n", LISTENER_IP, PORT);
 			//Start listening, set backlog to -1 in order to not assign a limit to the pending connections queue
 			while(listen(sockfd, -1) != -1)
 			{
-				printf("Listening on %s:%i\n", LISTENER_IP, PORT);
 				//Accept the client and assign a file descriptor
 				clientfd = accept(sockfd, (struct sockaddr *)&clientsock, (socklen_t *)&clientsize);
 				if(clientfd != -1)
