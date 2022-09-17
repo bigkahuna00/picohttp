@@ -21,13 +21,18 @@ char* craft_response(char* filename)
 
 	fp = fopen(filename, "r");
 
-	size_t filesize = fread(data, 1, 8192, fp);
+	if(fp != NULL)
+	{
+		size_t filesize = fread(data, 1, 8192, fp);
+		
+		memcpy(response, BASE_RESPONSE, strlen(BASE_RESPONSE));
+		
+		memcpy(response+strlen(BASE_RESPONSE), data, filesize);
+		
+		return response;
+	}
 
-	memcpy(response, BASE_RESPONSE, strlen(BASE_RESPONSE));
-
-	memcpy(response+strlen(BASE_RESPONSE), data, filesize);
-
-	return response;
+	return "error";
 }
 
 int compare_filename(char* local_filename, char* request_filename)
@@ -109,11 +114,22 @@ void listener(int PORT, char* filename)
 							if(comparison == 0)
 							{
 								char* data = craft_response(filename);
+								if(strcmp(data, "error") != 0)
+								{
 								if(send(clientfd, data, strlen(data), 0) != -1)
 								{
 									printf("[+] %s\n", data);
 								}
 								close(clientfd);
+							    }
+							    else
+							    {
+							    	if(send(clientfd, NOT_FOUND, strlen(NOT_FOUND), 0) != -1)
+							    	{
+							    		printf("[+] %s\n", NOT_FOUND);
+							    		close(clientfd);
+							    	}
+							    }
 							}
 							else
 							{
@@ -136,8 +152,15 @@ int main(int argc, char* argv[])
 	if(argc == 3)
 	{
 		int PORT = atoi(argv[1]);
-		char* filename = argv[2];
-		listener(PORT, filename);
+		if(PORT != 0)
+		{
+			char* filename = argv[2];
+			listener(PORT, filename);
+		}
+		else
+		{
+			printf("Ports: 1-65535\n");
+		}
 	}
 	else
 	{
